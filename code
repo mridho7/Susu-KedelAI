@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+
+dataset = pd.read_csv('/content/coffee_shop_revenue.csv')
+dataset.info()
+
+X = dataset.drop('Daily_Revenue', axis=1)
+y = dataset['Daily_Revenue']
+X.shape, y.shape
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+X_train.shape, y_train.shape
+
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+y_pred = lr.predict(X_test)
+
+r2 = r2_score(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+intercept = lr.intercept_
+
+print("r2 score: ", r2)
+print("mean squared error: ", mse)
+print("mean absolute error: ", mae)
+print("intercept: ", intercept)
+
+plt.scatter(y_test, y_pred, alpha=0.5)
+plt.plot([y.min(), y.max()], [y.min(), y.max()], color="red")
+plt.xlabel("nilai prediksi")
+plt.ylabel("nilai nyata")
+plt.title("nilai prediksi vs nyata")
+
+plt.show()
+
+above_line = y_test > y_pred
+count_above = np.sum(above_line)
+on_line = y_test == y_pred
+count_on = np.sum(on_line)
+below_line = y_test < y_pred
+count_below = np.sum(below_line)
+print(f"Number of points above the line: {count_above}")
+print(f"Number of points on the line: {count_on}")
+print(f"Number of points below the line: {count_below}")
